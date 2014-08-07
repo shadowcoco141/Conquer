@@ -38,7 +38,7 @@ public class IArena extends Arena {
 
 	public boolean addBluePoints() {
 		blue++;
-		if (blue > 100) {
+		/*if (blue > 100) {
 			for (String p_ : this.getAllPlayers()) {
 				if (m.pteam.containsKey(p_)) {
 					if (m.pteam.get(p_).equalsIgnoreCase("red")) {
@@ -48,13 +48,13 @@ public class IArena extends Arena {
 			}
 			this.stop();
 			return true;
-		}
+		}*/
 		return false;
 	}
 
 	public boolean addRedPoints() {
 		red++;
-		if (red > 100) {
+		/*if (red > 100) {
 			for (String p_ : this.getAllPlayers()) {
 				if (m.pteam.containsKey(p_)) {
 					if (m.pteam.get(p_).equalsIgnoreCase("blue")) {
@@ -64,7 +64,7 @@ public class IArena extends Arena {
 			}
 			this.stop();
 			return true;
-		}
+		}*/
 		return false;
 	}
 
