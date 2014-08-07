@@ -22,6 +22,9 @@ public class CheckPoint {
 	boolean wasred = false;
 	boolean wasblue = false;
 
+	boolean lastred = false;
+	boolean lastblue = false;
+	
 	public CheckPoint(Main plugin, IArena a, Location center) {
 		this.a = a;
 		this.plugin = plugin;
@@ -39,12 +42,17 @@ public class CheckPoint {
 			if (b == 14) { // red
 				// red already (that shouldn't happen)
 				//System.out.println("red already there?");
-				cx_r = -2;
-				cz_r = -2;
+				//cx_r = -2;
+				//cz_r = -2;
+				getNextLoc("red");
 				return;
 			} else if (b == 11) { // blue
-				cx_b = cx_r;
-				cz_b = cz_r;
+				lastred = false;
+				if(!lastblue){
+					cx_b = cx_r;
+					cz_b = cz_r;
+					lastblue = true;
+				}
 				blue--;
 			} else { // white
 
@@ -79,12 +87,17 @@ public class CheckPoint {
 			if (b == 11) { // blue
 				// red already (that shouldn't happen)
 				//System.out.println("blue already there?");
-				cx_b = -2;
-				cz_b = -2;
+				//cx_b = -2;
+				//cz_b = -2;
+				getNextLoc("blue");
 				return;
 			} else if (b == 14) { // red
-				cx_r = cx_b;
-				cz_r = cz_b;
+				lastblue = false;
+				if(!lastred){
+					cx_r = cx_b;
+					cz_r = cz_b;
+					lastred = true;
+				}
 				red--;
 			} else { // white
 

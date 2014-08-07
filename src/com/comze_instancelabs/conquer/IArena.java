@@ -107,7 +107,7 @@ public class IArena extends Arena {
 
 		tt = Bukkit.getScheduler().runTaskTimer(m, new Runnable() {
 			public void run() {
-				ArrayList<String> temp = a.getAllPlayers();
+				ArrayList<String> temp = new ArrayList<String>(a.getAllPlayers());
 				for (String p_ : temp) {
 					Player p = Bukkit.getPlayer(p_);
 					CheckPoint c = isInCP(p);
@@ -135,8 +135,15 @@ public class IArena extends Arena {
 
 	@Override
 	public void stop() {
+		if(tt != null){
+			tt.cancel();
+		}
 		super.stop();
 		resetCPs();
+		this.redcp = 0;
+		this.bluecp = 0;
+		this.red = 0;
+		this.blue = 0;
 	}
 
 	public void loadCheckpoints() {
@@ -168,6 +175,14 @@ public class IArena extends Arena {
 					l.clone().add(x, 0D, z).getBlock().setTypeIdAndData(35, (byte) 0, true);
 				}
 			}
+			cp.red = 0;
+			cp.blue = 0;
+			cp.cx_b = -2;
+			cp.cz_b = -2;
+			cp.cx_r = -2;
+			cp.cz_r = -2;
+			cp.wasblue = false;
+			cp.wasred = false;
 		}
 	}
 
