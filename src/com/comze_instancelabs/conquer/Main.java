@@ -115,6 +115,11 @@ public class Main extends JavaPlugin implements Listener {
 
 	public void addGear(String p_) {
 		Player p = Bukkit.getPlayer(p_);
+		
+		p.getInventory().clear();
+		p.updateInventory();
+		
+		pli.getClassesHandler().getClass(p_);
 
 		ItemStack lhelmet = new ItemStack(Material.LEATHER_HELMET, 1);
 		LeatherArmorMeta lam = (LeatherArmorMeta) lhelmet.getItemMeta();
@@ -185,7 +190,7 @@ public class Main extends JavaPlugin implements Listener {
 	@EventHandler(priority = EventPriority.HIGHEST)
 	public void onPlayerDeath(PlayerDeathEvent event) {
 		if (event.getEntity() instanceof Player) {
-			Player p = (Player) event.getEntity();
+			final Player p = (Player) event.getEntity();
 			if (pli.global_players.containsKey(p.getName())) {
 				event.setDeathMessage(null);
 				IArena a = (IArena) pli.global_players.get(p.getName());
@@ -195,16 +200,52 @@ public class Main extends JavaPlugin implements Listener {
 						Player killer = (Player) p.getKiller();
 						if (pteam.get(killer.getName()).equalsIgnoreCase("red")) {
 							if (!a.addRedPoints()) {
-								Util.teleportPlayerFixed(p, a.getSpawns().get(0));
-								m.addGear(p.getName());
+								Util.teleportPlayerFixed(p, a.getSpawns().get(1));
+								Bukkit.getScheduler().runTaskLater(this, new Runnable() {
+									public void run() {
+										m.addGear(p.getName());
+									}
+								}, 20L);
 							}
 						} else {
 							if (!a.addBluePoints()) {
-								Util.teleportPlayerFixed(p, a.getSpawns().get(1));
-								m.addGear(p.getName());
+								Util.teleportPlayerFixed(p, a.getSpawns().get(0));
+								Bukkit.getScheduler().runTaskLater(this, new Runnable() {
+									public void run() {
+										m.addGear(p.getName());
+									}
+								}, 20L);
 							}
 						}
 						p.sendMessage(ChatColor.RED + "You have been killed by " + ChatColor.DARK_RED + killer.getName() + ChatColor.RED + ".");
+					}
+				}
+			}
+		}
+	}
+
+	@EventHandler
+	public void onEntityDamageByEntity(EntityDamageByEntityEvent event) {
+		if (event.getEntity() instanceof Player) {
+			final Player p = (Player) event.getEntity();
+			if (pli.global_players.containsKey(p.getName())) {
+				IArena a = (IArena) pli.global_players.get(p.getName());
+				if (a.getArenaState() == ArenaState.INGAME) {
+					if (event.getDamager() instanceof Player) {
+						Player p2 = (Player) event.getDamager();
+						if (m.pteam.get(p.getName()).equalsIgnoreCase(m.pteam.get(p2.getName()))) {
+							// same team
+							event.setCancelled(true);
+						}
+					} else if (event.getDamager() instanceof Arrow) {
+						Arrow ar = (Arrow) event.getDamager();
+						if (ar.getShooter() instanceof Player) {
+							Player p2 = (Player) ar.getShooter();
+							if (m.pteam.get(p.getName()).equalsIgnoreCase(m.pteam.get(p2.getName()))) {
+								// same team
+								event.setCancelled(true);
+							}
+						}
 					}
 				}
 			}
@@ -242,7 +283,7 @@ public class Main extends JavaPlugin implements Listener {
 				return;
 			}
 			String arenaname = args[1];
-			
+
 			Location l = event.getBlock().getLocation();
 
 			int count = getAllCheckPoints(arenaname);
