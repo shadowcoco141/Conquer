@@ -64,6 +64,9 @@ public class CheckPoint {
 
 			if (red > 24) {
 				// check if it was blue before, if yes -> decrease blue cp
+				if(wasred){
+					return;
+				}
 				wasred = true;
 				if (wasblue) {
 					wasblue = false;
@@ -108,11 +111,14 @@ public class CheckPoint {
 			setDataAtCurrentLoc("blue");
 
 			if (blue > 24) {
-				// check if it was blue before, if yes -> decrease blue cp
+				// check if it was red before, if yes -> decrease red cp
+				if(wasblue){
+					return;
+				}
 				wasblue = true;
 				if (wasred) {
 					wasred = false;
-					a.bluecp--;
+					a.redcp--;
 				}
 				a.bluecp++;
 				if (a.bluecp > plugin.getAllCheckPoints(a.getName()) - 1) {
