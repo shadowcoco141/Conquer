@@ -272,30 +272,32 @@ public class Main extends JavaPlugin implements Listener {
 	public void onBlockPlace(BlockPlaceEvent event) {
 		if (event.getBlock().getType() == Material.DRAGON_EGG) {
 			Player p = event.getPlayer();
-			String arenaname_ = event.getItemInHand().getItemMeta().getDisplayName();
+			if(p.hasPermission("mgconquer.setup")){
+				String arenaname_ = event.getItemInHand().getItemMeta().getDisplayName();
 
-			if (arenaname_ == null)
-				return;
+				if (arenaname_ == null)
+					return;
 
-			String args[] = arenaname_.split(":");
-			String plugin = args[0];
-			if (!plugin.equalsIgnoreCase("mgconquer")) {
-				return;
-			}
-			String arenaname = args[1];
-
-			Location l = event.getBlock().getLocation();
-
-			int count = getAllCheckPoints(arenaname);
-			Util.saveComponentForArena(this, arenaname, "checkpoints.cp" + Integer.toString(count), l.clone().add(0D, -1D, 0D));
-			event.getPlayer().sendMessage(pli.getMessagesConfig().successfully_set.replaceAll("<component>", "checkpoint " + Integer.toString(count)));
-
-			for (int x = -2; x < 3; x++) {
-				for (int z = -2; z < 3; z++) {
-					l.clone().add(x, -1D, z).getBlock().setType(Material.WOOL);
+				String args[] = arenaname_.split(":");
+				String plugin = args[0];
+				if (!plugin.equalsIgnoreCase("mgconquer")) {
+					return;
 				}
+				String arenaname = args[1];
+
+				Location l = event.getBlock().getLocation();
+
+				int count = getAllCheckPoints(arenaname);
+				Util.saveComponentForArena(this, arenaname, "checkpoints.cp" + Integer.toString(count), l.clone().add(0D, -1D, 0D));
+				event.getPlayer().sendMessage(pli.getMessagesConfig().successfully_set.replaceAll("<component>", "checkpoint " + Integer.toString(count)));
+
+				for (int x = -2; x < 3; x++) {
+					for (int z = -2; z < 3; z++) {
+						l.clone().add(x, -1D, z).getBlock().setType(Material.WOOL);
+					}
+				}
+				event.setCancelled(true);
 			}
-			event.setCancelled(true);
 		}
 	}
 
