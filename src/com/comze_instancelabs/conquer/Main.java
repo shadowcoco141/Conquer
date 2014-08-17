@@ -115,10 +115,10 @@ public class Main extends JavaPlugin implements Listener {
 
 	public void addGear(String p_) {
 		Player p = Bukkit.getPlayer(p_);
-		
+
 		p.getInventory().clear();
 		p.updateInventory();
-		
+
 		pli.getClassesHandler().getClass(p_);
 
 		ItemStack lhelmet = new ItemStack(Material.LEATHER_HELMET, 1);
@@ -272,7 +272,7 @@ public class Main extends JavaPlugin implements Listener {
 	public void onBlockPlace(BlockPlaceEvent event) {
 		if (event.getBlock().getType() == Material.DRAGON_EGG) {
 			Player p = event.getPlayer();
-			if(p.hasPermission("mgconquer.setup")){
+			if (p.hasPermission("mgconquer.setup")) {
 				String arenaname_ = event.getItemInHand().getItemMeta().getDisplayName();
 
 				if (arenaname_ == null)
