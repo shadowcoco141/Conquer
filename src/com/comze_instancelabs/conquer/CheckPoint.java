@@ -1,7 +1,6 @@
 package com.comze_instancelabs.conquer;
 
 import org.bukkit.Location;
-import org.bukkit.plugin.java.JavaPlugin;
 
 public class CheckPoint {
 

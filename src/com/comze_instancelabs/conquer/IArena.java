@@ -38,33 +38,19 @@ public class IArena extends Arena {
 
 	public boolean addBluePoints() {
 		blue++;
-		/*if (blue > 100) {
-			for (String p_ : this.getAllPlayers()) {
-				if (m.pteam.containsKey(p_)) {
-					if (m.pteam.get(p_).equalsIgnoreCase("red")) {
-						MinigamesAPI.getAPI().pinstances.get(m).global_lost.put(p_, this);
-					}
-				}
-			}
-			this.stop();
-			return true;
-		}*/
+		/*
+		 * if (blue > 100) { for (String p_ : this.getAllPlayers()) { if (m.pteam.containsKey(p_)) { if (m.pteam.get(p_).equalsIgnoreCase("red")) {
+		 * MinigamesAPI.getAPI().pinstances.get(m).global_lost.put(p_, this); } } } this.stop(); return true; }
+		 */
 		return false;
 	}
 
 	public boolean addRedPoints() {
 		red++;
-		/*if (red > 100) {
-			for (String p_ : this.getAllPlayers()) {
-				if (m.pteam.containsKey(p_)) {
-					if (m.pteam.get(p_).equalsIgnoreCase("blue")) {
-						MinigamesAPI.getAPI().pinstances.get(m).global_lost.put(p_, this);
-					}
-				}
-			}
-			this.stop();
-			return true;
-		}*/
+		/*
+		 * if (red > 100) { for (String p_ : this.getAllPlayers()) { if (m.pteam.containsKey(p_)) { if (m.pteam.get(p_).equalsIgnoreCase("blue")) {
+		 * MinigamesAPI.getAPI().pinstances.get(m).global_lost.put(p_, this); } } } this.stop(); return true; }
+		 */
 		return false;
 	}
 
@@ -113,6 +99,7 @@ public class IArena extends Arena {
 					CheckPoint c = isInCP(p);
 					if (c != null) {
 						c.evaluate(m.pteam.get(p.getName()));
+						updateBeacons();
 					}
 				}
 			}
@@ -131,13 +118,39 @@ public class IArena extends Arena {
 				}
 			}
 		}, 20L);
+		updateBeacons();
+	}
+
+	public void updateBeacons() {
+		for (CheckPoint cp : this.cps) {
+			for (String p_ : this.getAllPlayers()) {
+				Player p = Bukkit.getPlayer(p_);
+				if (p != null) {
+					spawnBeacon(p, cp.getCenter().clone());
+				}
+			}
+		}
+	}
+
+	public void spawnBeacon(Player player, Location loc) {
+		player.sendBlockChange(loc, Material.BEACON, (byte) 0);
+		for (int x = -1; x < 2; x++) {
+			for (int z = -1; z < 2; z++) {
+				try {
+					player.sendBlockChange(loc.clone().add(x, -1, z), Material.DIAMOND_BLOCK, (byte) 0);
+				} catch (Exception e) {
+					e.printStackTrace();
+				}
+			}
+		}
 	}
 
 	@Override
 	public void stop() {
-		if(tt != null){
+		if (tt != null) {
 			tt.cancel();
 		}
+		updateBeacons();
 		super.stop();
 		resetCPs();
 		this.redcp = 0;
