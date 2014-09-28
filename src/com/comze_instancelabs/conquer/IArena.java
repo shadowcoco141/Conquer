@@ -68,7 +68,7 @@ public class IArena extends Arena {
 
 	@Override
 	public void spectate(String playername) {
-		// TODO tp to spawn back
+		//
 	}
 
 	BukkitTask tt;
@@ -96,10 +96,12 @@ public class IArena extends Arena {
 				ArrayList<String> temp = new ArrayList<String>(a.getAllPlayers());
 				for (String p_ : temp) {
 					Player p = Bukkit.getPlayer(p_);
-					CheckPoint c = isInCP(p);
-					if (c != null) {
-						c.evaluate(m.pteam.get(p.getName()));
-						updateBeacons();
+					if (p != null) {
+						CheckPoint c = isInCP(p);
+						if (c != null) {
+							c.evaluate(m.pteam.get(p.getName()));
+							updateBeacons();
+						}
 					}
 				}
 			}

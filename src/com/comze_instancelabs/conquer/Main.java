@@ -63,6 +63,12 @@ public class Main extends JavaPlugin implements Listener {
 		pinstance.setArenaListener(listener);
 		MinigamesAPI.getAPI().registerArenaListenerLater(this, listener);
 		pli = pinstance;
+		try {
+			pinstance.getClass().getMethod("setAchievementGuiEnabled", boolean.class);
+			pinstance.setAchievementGuiEnabled(true);
+		} catch (NoSuchMethodException e) {
+			System.out.println("Update your MinigamesLib to the latest version to use the Achievement Gui.");
+		}
 	}
 
 	public static ArrayList<Arena> loadArenas(JavaPlugin plugin, ArenasConfig cf) {
@@ -210,6 +216,12 @@ public class Main extends JavaPlugin implements Listener {
 							}
 						}
 						p.sendMessage(ChatColor.RED + "You have been killed by " + ChatColor.DARK_RED + killer.getName() + ChatColor.RED + ".");
+						try {
+							a.getClass().getMethod("onEliminated", String.class);
+							a.onEliminated(p.getName());
+						} catch (NoSuchMethodException e) {
+							System.out.println("Please update your MinigamesLib version to work with this Conquer version!");
+						}
 					}
 				}
 			}
