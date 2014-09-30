@@ -10,6 +10,7 @@ import org.bukkit.FireworkEffect;
 import org.bukkit.Location;
 import org.bukkit.Material;
 import org.bukkit.FireworkEffect.Type;
+import org.bukkit.block.Block;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandSender;
 import org.bukkit.configuration.file.FileConfiguration;
@@ -76,6 +77,7 @@ public class Main extends JavaPlugin implements Listener {
 		}
 
 		this.getConfig().addDefault("config.spawn_fireworks_at_checkpoints", true);
+		this.getConfig().addDefault("config.checkpoint_register_y_axis", 100);
 
 		this.getConfig().options().copyDefaults(true);
 		this.saveConfig();
@@ -307,7 +309,9 @@ public class Main extends JavaPlugin implements Listener {
 
 				for (int x = -2; x < 3; x++) {
 					for (int z = -2; z < 3; z++) {
-						l.clone().add(x, -1D, z).getBlock().setType(Material.WOOL);
+						Block b = l.clone().add(x, -1D, z).getBlock();
+						b.setType(Material.WOOL);
+						b.setData((byte) 0);
 					}
 				}
 				event.setCancelled(true);

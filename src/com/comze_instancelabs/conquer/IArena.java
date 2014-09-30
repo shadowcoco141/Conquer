@@ -28,6 +28,8 @@ public class IArena extends Arena {
 
 	boolean cteam = true;
 
+	int checkpoint_y_check = 100;
+
 	ArrayList<CheckPoint> cps = new ArrayList<CheckPoint>();
 
 	public IArena(Main m, String arena_id) {
@@ -88,6 +90,8 @@ public class IArena extends Arena {
 				Util.teleportPlayerFixed(p, a.getSpawns().get(1));
 			}
 		}
+
+		checkpoint_y_check = m.getConfig().getInt("config.checkpoint_register_y_axis");
 
 		super.start(false);
 
@@ -175,7 +179,7 @@ public class IArena extends Arena {
 		for (CheckPoint cp : this.cps) {
 			Location l = p.getLocation();
 			Location l2 = cp.getCenter();
-			if ((Math.abs(l.getBlockX() - l2.getBlockX()) < 3) && (Math.abs(l.getBlockZ() - l2.getBlockZ()) < 3)) {
+			if ((Math.abs(l.getBlockX() - l2.getBlockX()) < 3) && (Math.abs(l.getBlockZ() - l2.getBlockZ()) < 3) && Math.abs(l.getBlockY() - l2.getBlockY()) < checkpoint_y_check) {
 				return cp;
 			}
 		}
