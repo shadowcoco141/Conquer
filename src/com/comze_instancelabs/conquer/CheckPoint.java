@@ -1,5 +1,6 @@
 package com.comze_instancelabs.conquer;
 
+import org.bukkit.Color;
 import org.bukkit.Location;
 
 public class CheckPoint {
@@ -72,6 +73,7 @@ public class CheckPoint {
 					a.bluecp--;
 				}
 				a.redcp++;
+				plugin.spawnFirework(this.getCenter(), Color.RED);
 				if (a.redcp > plugin.getAllCheckPoints(a.getName()) - 1) {
 					for (String p_ : a.getAllPlayers()) {
 						if (plugin.pteam.get(p_).equalsIgnoreCase("blue")) {
@@ -120,6 +122,7 @@ public class CheckPoint {
 					a.redcp--;
 				}
 				a.bluecp++;
+				plugin.spawnFirework(this.getCenter(), Color.BLUE);
 				if (a.bluecp > plugin.getAllCheckPoints(a.getName()) - 1) {
 					for (String p_ : a.getAllPlayers()) {
 						if (plugin.pteam.get(p_).equalsIgnoreCase("red")) {

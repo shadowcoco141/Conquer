@@ -6,12 +6,16 @@ import java.util.HashMap;
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
 import org.bukkit.Color;
+import org.bukkit.FireworkEffect;
 import org.bukkit.Location;
 import org.bukkit.Material;
+import org.bukkit.FireworkEffect.Type;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandSender;
 import org.bukkit.configuration.file.FileConfiguration;
 import org.bukkit.entity.Arrow;
+import org.bukkit.entity.EntityType;
+import org.bukkit.entity.Firework;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.EventPriority;
@@ -23,6 +27,7 @@ import org.bukkit.event.entity.PlayerDeathEvent;
 import org.bukkit.event.player.PlayerDropItemEvent;
 import org.bukkit.event.player.PlayerMoveEvent;
 import org.bukkit.inventory.ItemStack;
+import org.bukkit.inventory.meta.FireworkMeta;
 import org.bukkit.inventory.meta.ItemMeta;
 import org.bukkit.inventory.meta.LeatherArmorMeta;
 import org.bukkit.plugin.java.JavaPlugin;
@@ -69,6 +74,11 @@ public class Main extends JavaPlugin implements Listener {
 		} catch (NoSuchMethodException e) {
 			System.out.println("Update your MinigamesLib to the latest version to use the Achievement Gui.");
 		}
+
+		this.getConfig().addDefault("config.spawn_fireworks_at_checkpoints", true);
+
+		this.getConfig().options().copyDefaults(true);
+		this.saveConfig();
 	}
 
 	public static ArrayList<Arena> loadArenas(JavaPlugin plugin, ArenasConfig cf) {
@@ -314,6 +324,17 @@ public class Main extends JavaPlugin implements Listener {
 			}
 		}
 		return ret;
+	}
+
+	public void spawnFirework(Location l, Color c) {
+		if (getConfig().getBoolean("config.spawn_fireworks_at_checkpoints")) {
+			Firework fw = (Firework) l.getWorld().spawnEntity(l, EntityType.FIREWORK);
+			FireworkMeta fwm = fw.getFireworkMeta();
+			FireworkEffect effect = FireworkEffect.builder().flicker(true).withColor(c).with(Type.BURST).trail(true).build();
+			fwm.addEffect(effect);
+			fwm.setPower(1);
+			fw.setFireworkMeta(fwm);
+		}
 	}
 
 }
