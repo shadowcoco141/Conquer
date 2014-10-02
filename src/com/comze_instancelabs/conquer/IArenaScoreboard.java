@@ -38,7 +38,7 @@ public class IArenaScoreboard extends ArenaScoreboard {
 
 			aobjective.get(arena.getName()).setDisplaySlot(DisplaySlot.SIDEBAR);
 
-			aobjective.get(arena.getName()).setDisplayName("[" + arena.getName() + "]");
+			aobjective.get(arena.getName()).setDisplayName(MinigamesAPI.getAPI().pinstances.get(plugin).getMessagesConfig().scoreboard_title.replaceAll("<arena>", arena.getName()));
 
 			ascore.get(arena.getName()).resetScores(Bukkit.getOfflinePlayer(Integer.toString(arena.redcp - 1) + " "));
 			ascore.get(arena.getName()).resetScores(Bukkit.getOfflinePlayer(Integer.toString(arena.redcp + 1) + " "));
