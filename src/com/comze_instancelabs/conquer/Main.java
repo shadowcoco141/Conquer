@@ -2,19 +2,21 @@ package com.comze_instancelabs.conquer;
 
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.HashSet;
 
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
 import org.bukkit.Color;
 import org.bukkit.FireworkEffect;
+import org.bukkit.FireworkEffect.Type;
 import org.bukkit.Location;
 import org.bukkit.Material;
-import org.bukkit.FireworkEffect.Type;
 import org.bukkit.block.Block;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandSender;
 import org.bukkit.configuration.file.FileConfiguration;
 import org.bukkit.entity.Arrow;
+import org.bukkit.entity.Entity;
 import org.bukkit.entity.EntityType;
 import org.bukkit.entity.Firework;
 import org.bukkit.entity.Player;
@@ -27,6 +29,7 @@ import org.bukkit.event.entity.EntityDamageByEntityEvent;
 import org.bukkit.event.entity.PlayerDeathEvent;
 import org.bukkit.event.player.PlayerDropItemEvent;
 import org.bukkit.event.player.PlayerMoveEvent;
+import org.bukkit.event.player.PlayerPickupItemEvent;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.meta.FireworkMeta;
 import org.bukkit.inventory.meta.ItemMeta;
@@ -202,6 +205,8 @@ public class Main extends JavaPlugin implements Listener {
 		if (event.getEntity() instanceof Player) {
 			final Player p = (Player) event.getEntity();
 			if (pli.global_players.containsKey(p.getName())) {
+				final Location l = p.getLocation();
+				clear(l);
 				event.setDeathMessage(null);
 				IArena a = (IArena) pli.global_players.get(p.getName());
 				if (a.getArenaState() == ArenaState.INGAME) {
@@ -214,6 +219,7 @@ public class Main extends JavaPlugin implements Listener {
 								Bukkit.getScheduler().runTaskLater(this, new Runnable() {
 									public void run() {
 										m.addGear(p.getName());
+										clear(p.getLocation());
 									}
 								}, 20L);
 							}
@@ -223,6 +229,7 @@ public class Main extends JavaPlugin implements Listener {
 								Bukkit.getScheduler().runTaskLater(this, new Runnable() {
 									public void run() {
 										m.addGear(p.getName());
+										clear(p.getLocation());
 									}
 								}, 20L);
 							}
@@ -270,6 +277,14 @@ public class Main extends JavaPlugin implements Listener {
 
 	@EventHandler
 	public void onPlayerDropItem(PlayerDropItemEvent event) {
+		Player p = event.getPlayer();
+		if (pli.global_players.containsKey(p.getName())) {
+			event.setCancelled(true);
+		}
+	}
+
+	@EventHandler
+	public void onPlayerPickupItem(PlayerPickupItemEvent event) {
 		Player p = event.getPlayer();
 		if (pli.global_players.containsKey(p.getName())) {
 			event.setCancelled(true);
@@ -339,6 +354,37 @@ public class Main extends JavaPlugin implements Listener {
 			fwm.setPower(1);
 			fw.setFireworkMeta(fwm);
 		}
+	}
+
+	public static Entity[] getNearbyEntities(Location l, int radius) {
+		int chunkRadius = radius < 16 ? 1 : (radius - (radius % 16)) / 16;
+		HashSet<Entity> radiusEntities = new HashSet<Entity>();
+		for (int chX = 0 - chunkRadius; chX <= chunkRadius; chX++) {
+			for (int chZ = 0 - chunkRadius; chZ <= chunkRadius; chZ++) {
+				int x = (int) l.getX(), y = (int) l.getY(), z = (int) l.getZ();
+				for (Entity e : new Location(l.getWorld(), x + (chX * 16), y, z + (chZ * 16)).getChunk().getEntities()) {
+					if (e.getLocation().distance(l) <= radius && e.getLocation().getBlock() != l.getBlock())
+						radiusEntities.add(e);
+				}
+			}
+		}
+		return radiusEntities.toArray(new Entity[radiusEntities.size()]);
+	}
+
+	public void clear(final Location l) {
+		Bukkit.getScheduler().runTaskLater(this, new Runnable() {
+			public void run() {
+				try {
+					for (Entity e_ : getNearbyEntities(l, 20)) {
+						if (e_.getType() == EntityType.DROPPED_ITEM) {
+							e_.remove();
+						}
+					}
+				} catch (Exception e) {
+					;
+				}
+			}
+		}, 5L);
 	}
 
 }
