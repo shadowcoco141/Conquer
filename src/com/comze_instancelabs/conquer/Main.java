@@ -208,7 +208,7 @@ public class Main extends JavaPlugin implements Listener {
 				final Location l = p.getLocation();
 				clear(l);
 				event.setDeathMessage(null);
-				IArena a = (IArena) pli.global_players.get(p.getName());
+				final IArena a = (IArena) pli.global_players.get(p.getName());
 				if (a.getArenaState() == ArenaState.INGAME) {
 					p.setHealth(20D);
 					if (p.getKiller() instanceof Player) {
@@ -218,7 +218,9 @@ public class Main extends JavaPlugin implements Listener {
 								Util.teleportPlayerFixed(p, a.getSpawns().get(1));
 								Bukkit.getScheduler().runTaskLater(this, new Runnable() {
 									public void run() {
-										m.addGear(p.getName());
+										if (a.getArenaState() == ArenaState.INGAME) {
+											m.addGear(p.getName());
+										}
 										clear(p.getLocation());
 									}
 								}, 20L);
@@ -228,7 +230,9 @@ public class Main extends JavaPlugin implements Listener {
 								Util.teleportPlayerFixed(p, a.getSpawns().get(0));
 								Bukkit.getScheduler().runTaskLater(this, new Runnable() {
 									public void run() {
-										m.addGear(p.getName());
+										if (a.getArenaState() == ArenaState.INGAME) {
+											m.addGear(p.getName());
+										}
 										clear(p.getLocation());
 									}
 								}, 20L);
