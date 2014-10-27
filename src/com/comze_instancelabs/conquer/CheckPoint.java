@@ -24,7 +24,7 @@ public class CheckPoint {
 
 	boolean lastred = false;
 	boolean lastblue = false;
-	
+
 	public CheckPoint(Main plugin, IArena a, Location center) {
 		this.a = a;
 		this.plugin = plugin;
@@ -35,20 +35,20 @@ public class CheckPoint {
 		return this.center;
 	}
 
-	public void evaluate(String team) {
+	public void evaluate(String conquerer, String team) {
 		if (team.equalsIgnoreCase("red")) {
 			// check if current block is blue, decrease blue too
 			byte b = getDataAtCurrentLoc("red");
 			if (b == 14) { // red
 				// red already (that shouldn't happen)
-				//System.out.println("red already there?");
-				//cx_r = -2;
-				//cz_r = -2;
+				// System.out.println("red already there?");
+				// cx_r = -2;
+				// cz_r = -2;
 				getNextLoc("red");
 				return;
 			} else if (b == 11) { // blue
 				lastred = false;
-				if(!lastblue){
+				if (!lastblue) {
 					cx_b = cx_r;
 					cz_b = cz_r;
 					lastblue = true;
@@ -64,7 +64,7 @@ public class CheckPoint {
 
 			if (red > 24) {
 				// check if it was blue before, if yes -> decrease blue cp
-				if(wasred){
+				if (wasred) {
 					return;
 				}
 				wasred = true;
@@ -73,6 +73,23 @@ public class CheckPoint {
 					a.bluecp--;
 				}
 				a.redcp++;
+				if (plugin.pconqueredcps.containsKey(conquerer)) {
+					plugin.pconqueredcps.put(conquerer, plugin.pconqueredcps.get(conquerer) + 1);
+				} else {
+					plugin.pconqueredcps.put(conquerer, 1);
+				}
+				int temp = 0;
+				if (plugin.getConfig().isSet("tempconquers." + conquerer)) {
+					temp = plugin.getConfig().getInt("tempconquers." + conquerer);
+				}
+				plugin.getConfig().set("tempconquers." + conquerer, temp + 1);
+				plugin.saveConfig();
+				if (plugin.getConfig().getInt("tempconquers." + conquerer) > 99) {
+					plugin.pli.getArenaAchievements().setAchievementDone(conquerer, "capture_hundred_checkpoints_all_time", false);
+				}
+				if (plugin.pconqueredcps.get(conquerer) > 2) {
+					plugin.pli.getArenaAchievements().setAchievementDone(conquerer, "capture_three_checkpoints_in_a_game", false);
+				}
 				plugin.spawnFirework(this.getCenter(), Color.RED);
 				if (a.redcp > plugin.getAllCheckPoints(a.getName()) - 1) {
 					for (String p_ : a.getAllPlayers()) {
@@ -90,14 +107,14 @@ public class CheckPoint {
 			byte b = getDataAtCurrentLoc("blue");
 			if (b == 11) { // blue
 				// red already (that shouldn't happen)
-				//System.out.println("blue already there?");
-				//cx_b = -2;
-				//cz_b = -2;
+				// System.out.println("blue already there?");
+				// cx_b = -2;
+				// cz_b = -2;
 				getNextLoc("blue");
 				return;
 			} else if (b == 14) { // red
 				lastblue = false;
-				if(!lastred){
+				if (!lastred) {
 					cx_r = cx_b;
 					cz_r = cz_b;
 					lastred = true;
@@ -113,7 +130,7 @@ public class CheckPoint {
 
 			if (blue > 24) {
 				// check if it was red before, if yes -> decrease red cp
-				if(wasblue){
+				if (wasblue) {
 					return;
 				}
 				wasblue = true;

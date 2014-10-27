@@ -1,5 +1,6 @@
 package com.comze_instancelabs.conquer;
 
+import java.lang.reflect.Method;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.HashSet;
@@ -59,6 +60,7 @@ public class Main extends JavaPlugin implements Listener {
 	ICommandHandler cmdhandler = new ICommandHandler();
 
 	public static HashMap<String, String> pteam = new HashMap<String, String>();
+	public HashMap<String, Integer> pconqueredcps = new HashMap<String, Integer>();
 
 	public void onEnable() {
 		m = this;
@@ -84,6 +86,19 @@ public class Main extends JavaPlugin implements Listener {
 
 		this.getConfig().options().copyDefaults(true);
 		this.saveConfig();
+		
+		boolean continue_ = false;
+		for (Method m : pli.getArenaAchievements().getClass().getMethods()) {
+			if (m.getName().equalsIgnoreCase("addDefaultAchievement")) {
+				continue_ = true;
+			}
+		}
+		if (continue_) {
+			pli.getArenaAchievements().addDefaultAchievement("capture_three_checkpoints_in_a_game", "Capture three checkpoints in a game!", 50);
+			pli.getArenaAchievements().addDefaultAchievement("capture_hundred_checkpoints_all_time", "Capture 100 checkpoints all-time!", 1000);
+			pli.getAchievementsConfig().getConfig().options().copyDefaults(true);
+			pli.getAchievementsConfig().saveConfig();
+		}
 	}
 
 	public static ArrayList<Arena> loadArenas(JavaPlugin plugin, ArenasConfig cf) {

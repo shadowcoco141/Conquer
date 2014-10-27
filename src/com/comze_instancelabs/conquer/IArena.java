@@ -103,7 +103,7 @@ public class IArena extends Arena {
 					if (p != null) {
 						CheckPoint c = isInCP(p);
 						if (c != null) {
-							c.evaluate(m.pteam.get(p.getName()));
+							c.evaluate(p.getName(), m.pteam.get(p.getName()));
 							updateBeacons();
 						}
 					}
